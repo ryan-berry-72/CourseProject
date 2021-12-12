@@ -1,0 +1,281 @@
+<html>
+    <h1>
+        Text to Music: Combining Sentiment Analysis with Sonic Pi
+    </h1>
+    <h2>
+        by Ryan Berry
+    </h2>
+    <div id=question1 class=question>
+        What is the purpose of this project?
+    </div>
+    <div id=intro1 class=explanation>
+        The goal of this experiment is to explore and identify potential connections between written text and musical beats. 
+    </div>
+    <div id=intro2 class=explanation>
+        By connecting output values from text mining algorithms to a set of input parameters which generate musical routines, we can accomplish this goal.
+    </div>
+    <div id=intro3 class=explanation>
+        The two primary technologies leveraged in this experiment are sentiment analysis and Sonic Pi. Sentiment analysis is used to measure the attitude of a text segment's author towards a topic. 
+        This "attitude measure" represents a critical input parameter in the experiment. After generating the various input parameters, we utilize a custom code generator to create Sonic Pi music. 
+        Consider Sonic Pi, which is a "code-based music creation and performance tool", as a cross between Python and Garage Band.
+    </div>
+    <div id=question2 class=question>
+        How to use this project?
+    </div>
+    <div id=intro4 class=explanation>
+        Input any number of English sentences into the text box below and click submit. The output box will contain musical code for easy copy/paste into the Sonic Pi application.
+        After pasting the code into the application, simply run it and enjoy your beats!
+    </div>
+    <div id=intro5 class=explanation>
+        The Sonic Pi application can be installed here: 
+    </div>
+    <a id='link' class='copy-button' href="https://sonic-pi.net/">DOWNLOAD SONIC PI HERE</a>
+    <input type="text" class='inputVals' placeholder="Enter English sentence(s)..." id="myInput">
+    <button type="button" id='convert-button' class = 'inputVals' onclick="convertToMusic();">Convert To Music!</button>
+    <pre id='code-block1', class='code-container'>
+        <code id='sonic-pi-code' class='text-code'>
+            <span id='parameters-start'>
+########## GENERATED PARAMETERS HERE ##########
+            </span>
+            <span id='parameters'>
+                <textarea id='parameters-box' class='text-box'>Use the text input box above to generate these values.</textarea>
+            </span>
+            <span id='parameters-end'>
+###############################################
+            </span>
+            <span id='code-span'>
+use_synth :fm
+refrain_count = note_values.length
+sleep_multiplier = 1.5
+
+live_loop :text_analysis do
+    refrain_count.times do |i|
+    note_count = note_values[i].length
+    note_count.times do |j|
+        note = note_values[i][j]
+        adsr = notes_adsr[i][j]
+        play note, amp: 0.3, attack: adsr[0], decay: adsr[1], sustain: adsr[2], release: adsr[3]
+        sleep 0.25 * sleep_multiplier
+    end
+    sleep 0.25 * sleep_multiplier
+    end
+end
+
+live_loop :cymbal do
+    sleep 2 * sleep_multiplier
+    sample :drum_cymbal_open, amp: 0.15, rate: 1
+end
+
+live_loop :bass_low do
+    sample :bd_808, amp: 7
+    sleep 0.5 * sleep_multiplier
+end
+
+live_loop :bass_heavy do
+    sample :bd_haus
+    sleep 0.5 * sleep_multiplier
+end
+
+live_loop :closed_hat do
+    sample :drum_cymbal_closed, amp: 0.4
+    sleep 0.25 * sleep_multiplier
+end
+
+live_loop :clap do
+    sample :drum_snare_hard, amp: 0.4
+    sleep 1 * sleep_multiplier
+end</span>
+        </code>
+    </pre>
+    <svg class=space id=spacer width=0 height=50></svg>
+    <a id='full-copy' class='copy-button' href="#" onclick="CopyToClipboard('sonic-pi-code', 'full-copy');return false;">Copy Full Code</a>
+    <!-- <svg class=space id=spacer2 width=250 height=30></svg> -->
+    <a id='parameters-copy' class='copy-button' href="#" onclick="CopyToClipboard('parameters', 'parameters-copy');return false;">Copy Parameters Only</a>
+    <svg class=space id=spacer3 width=2000 height=200></svg>
+    <style>
+        h1 {
+            font-family: monaco;
+            text-align: center;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            color: lightskyblue;
+        }
+        h2 {
+            font-family: monaco;
+            font-size: 20px;
+            text-align: center;
+            width: 100%;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            color: lightpink;
+            margin-bottom: 75px;
+        }
+        body {
+            background-color: black;
+            color: azure;
+        }
+        .explanation {
+            word-wrap: break-word;
+            font-family: monaco;
+            margin:auto;
+            margin-bottom: 5px;
+            width: 50%;
+            padding: 12px;
+        }
+        .question {
+            font-size: 24px;
+            word-wrap: break-word;
+            font-family: monaco;
+            margin:auto;
+            width: 50%;
+            padding: 12px;
+            border-top: 2px solid lightskyblue;
+            color: lightpink;
+        }
+        .code-container {
+            margin:auto;
+            margin-bottom: 5px;
+            width: 50%;
+            padding: 12px;
+            padding-right: 200px;
+        }
+        pre {
+            font-size: 15px;
+            border: 2px solid lightskyblue;
+            color: lightpink;
+        }
+        .inputVals {
+            word-wrap: break-word;
+            font-family: monaco;
+            margin-bottom: 5px;
+            width: 50%;
+            padding: 12px;
+            margin-left: 25%;
+        }
+        #myInput {
+            margin-top: 100px;
+        }
+        #convert-button {
+            margin-bottom: 100px;
+        }
+        .copy-button {
+            color: azure;
+            word-wrap: break-word;
+            font-family: monaco;
+            width: 50%;
+            padding: 12px;
+            margin-left: 20%;
+        }
+        #full-copy {
+            margin-bottom: 100px;
+        }
+        #link {
+            margin-left: 30%;
+            color: lightskyblue;
+        }
+    </style>
+    <body onload=init()>
+        <script>
+            var firstConversion = true;
+            function init() {
+
+            }
+
+            var colorFlipFull = true;
+            var colorFlipParameters = true;
+            function CopyToClipboard(elementId, buttonId)
+            {
+                var r = document.createRange();
+                r.selectNode(document.getElementById(elementId));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(r);
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                if (buttonId === 'full-copy') {
+                    if (colorFlipFull) {
+                        document.getElementById(buttonId).style.color = "lightpink";
+                        colorFlipFull = false;
+                    } else {
+                        document.getElementById(buttonId).style.color = "azure";
+                        colorFlipFull = true;
+                    }
+                } else {
+                    if (colorFlipParameters) {
+                        document.getElementById(buttonId).style.color = "lightpink";
+                        colorFlipParameters = false;
+                    } else {
+                        document.getElementById(buttonId).style.color = "azure";
+                        colorFlipParameters = true;
+                    }
+                }
+            }
+
+            function convertToMusic(){
+                // Selecting the input element and get its value 
+                var inputVal = document.getElementById("myInput").value;
+                
+                if (inputVal === "") {
+                    alert("Detected empty input. Try that again...");
+                } else {
+                    formattedInput = {
+                        "text": inputVal
+                    }
+                    postData('http://localhost:5000/convert-text-to-music', formattedInput).then( response => {
+                        console.log("asdf");
+                        if (response === null) {
+                            console.log("Received null response.");
+                            return;
+                        }
+                        console.log("JSON response: " + JSON.stringify(response));
+                        document.getElementById('parameters-box').value = convertMusicValuesToString(response);
+                        if (firstConversion) {
+                            alert("SUCCESS! Scroll to the bottom to copy your encoded music to the clipboard.");
+                            firstConversion = false;
+                        }
+                    });
+                    console.log("Completed request to analyzer api");
+                }
+            }
+
+            function convertMusicValuesToString(response) {
+                return "note_values="+response.note_values+"\nnotes_adsr="+response.notes_adsr;
+            }
+
+            async function postData(url, data) {
+                console.log("Posting data: " + JSON.stringify(data));
+                // Default options are marked with *
+                const response = await fetch(url, {
+                    method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                    mode: 'cors', // no-cors, *cors, same-origin
+                    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                    // credentials: 'same-origin', // include, *same-origin, omit
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        // 'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    redirect: 'follow', // manual, *follow, error
+                    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                    body: JSON.stringify(data) // body data type must match "Content-Type" header
+                }).catch(error => {
+                    alert("Failed to get repsonse from backend api. Check api output window for more info.");
+                    console.error("Failed post request: " + error);
+                });
+                if (response === undefined) {
+                    console.log("returning null");
+                    return null;
+                } else {
+                    console.log("returning value");
+                    return response.json(); // parses JSON response into native JavaScript objects
+                }
+            }
+        </script>
+    </body>
+</html>
